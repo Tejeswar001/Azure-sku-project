@@ -1,0 +1,9 @@
+{
+	"name": "AI-customer-forcast-adf",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "9edfd89d-6843-44bb-8775-287d0db77bf8",
+		"tenantId": "e14e73eb-5251-4388-8d67-8f9f2e2d5a46"
+	}
+}
