@@ -1,0 +1,61 @@
+{
+	"name": "products",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "olist_products_dataset.txt",
+				"folderPath": "raw",
+				"fileSystem": "olist-staging"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "product_id",
+				"type": "String"
+			},
+			{
+				"name": "product_category_name",
+				"type": "String"
+			},
+			{
+				"name": "product_name_lenght",
+				"type": "String"
+			},
+			{
+				"name": "product_description_lenght",
+				"type": "String"
+			},
+			{
+				"name": "product_photos_qty",
+				"type": "String"
+			},
+			{
+				"name": "product_weight_g",
+				"type": "String"
+			},
+			{
+				"name": "product_length_cm",
+				"type": "String"
+			},
+			{
+				"name": "product_height_cm",
+				"type": "String"
+			},
+			{
+				"name": "product_width_cm",
+				"type": "String"
+			}
+		]
+	}
+}

@@ -1,0 +1,45 @@
+{
+	"name": "customer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "olist_customers_dataset.txt",
+				"folderPath": "raw",
+				"fileSystem": "olist-staging"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "customer_id",
+				"type": "String"
+			},
+			{
+				"name": "customer_unique_id",
+				"type": "String"
+			},
+			{
+				"name": "customer_zip_code_prefix",
+				"type": "String"
+			},
+			{
+				"name": "customer_city",
+				"type": "String"
+			},
+			{
+				"name": "customer_state",
+				"type": "String"
+			}
+		]
+	}
+}

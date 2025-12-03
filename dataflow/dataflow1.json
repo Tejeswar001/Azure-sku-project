@@ -1,0 +1,161 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "orders",
+						"type": "DatasetReference"
+					},
+					"name": "ordersStaging"
+				},
+				{
+					"dataset": {
+						"referenceName": "customer",
+						"type": "DatasetReference"
+					},
+					"name": "customersStaging"
+				},
+				{
+					"dataset": {
+						"referenceName": "products",
+						"type": "DatasetReference"
+					},
+					"name": "productsStaging"
+				},
+				{
+					"dataset": {
+						"referenceName": "items",
+						"type": "DatasetReference"
+					},
+					"name": "iteamStaging"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "itemsOrdersJoined"
+				},
+				{
+					"name": "ordersCustomersJoined"
+				},
+				{
+					"name": "finalJoined"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          order_id as string,",
+				"          customer_id as string,",
+				"          order_status as string,",
+				"          order_purchase_timestamp as string,",
+				"          order_approved_at as string,",
+				"          order_delivered_carrier_date as string,",
+				"          order_delivered_customer_date as string,",
+				"          order_estimated_delivery_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ordersStaging",
+				"source(output(",
+				"          customer_id as string,",
+				"          customer_unique_id as string,",
+				"          customer_zip_code_prefix as string,",
+				"          customer_city as string,",
+				"          customer_state as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> customersStaging",
+				"source(output(",
+				"          product_id as string,",
+				"          product_category_name as string,",
+				"          product_name_lenght as string,",
+				"          product_description_lenght as string,",
+				"          product_photos_qty as string,",
+				"          product_weight_g as string,",
+				"          product_length_cm as string,",
+				"          product_height_cm as string,",
+				"          product_width_cm as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> productsStaging",
+				"source(output(",
+				"          order_id as string,",
+				"          order_item_id as string,",
+				"          product_id as string,",
+				"          seller_id as string,",
+				"          shipping_limit_date as string,",
+				"          price as string,",
+				"          freight_value as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> iteamStaging",
+				"iteamStaging, ordersStaging join(iteamStaging@order_id == ordersStaging@order_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> itemsOrdersJoined",
+				"itemsOrdersJoined, customersStaging join(ordersStaging@customer_id == customersStaging@customer_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> ordersCustomersJoined",
+				"ordersCustomersJoined, productsStaging join(iteamStaging@product_id == productsStaging@product_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> finalJoined",
+				"select1 derive(order_qty = 1) ~> derivedColumn1",
+				"finalJoined select(mapColumn(",
+				"          order_id = iteamStaging@order_id,",
+				"          product_id = iteamStaging@product_id,",
+				"          price,",
+				"          freight_value,",
+				"          order_id = ordersStaging@order_id,",
+				"          customer_id = ordersStaging@customer_id,",
+				"          order_date = order_purchase_timestamp,",
+				"          customer_id = customersStaging@customer_id,",
+				"          customer_city,",
+				"          customer_state,",
+				"          product_id = productsStaging@product_id,",
+				"          product_category_name,",
+				"          product_name_lenght,",
+				"          product_description_lenght,",
+				"          product_photos_qty,",
+				"          product_weight_g,",
+				"          product_length_cm,",
+				"          product_height_cm,",
+				"          product_width_cm",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}
