@@ -51,6 +51,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "olist_model_input_single.csv",
 						"folderPath": "olist_model_input",
 						"fileSystem": "curated"
 					},
